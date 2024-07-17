@@ -68,7 +68,7 @@ h1 {
     overflow-y: auto;
 }
 
-#sharedWriting {
+#sharedWritingContainer {
     margin: 0;
     word-wrap: break-word;
 }

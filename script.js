@@ -16,7 +16,7 @@ const shareBtn = document.getElementById('shareBtn');
 const promptElement = document.getElementById('prompt');
 const newPromptBtn = document.getElementById('newPromptBtn');
 const sharedContent = document.getElementById('sharedContent');
-const sharedWriting = document.getElementById('sharedWriting');
+const sharedWritingContainer = document.getElementById('sharedWritingContainer');
 const finishEarlyBtn = document.getElementById('finishEarlyBtn');
 
 textArea.addEventListener('input', handleInput);
@@ -146,13 +146,25 @@ function finalizeText() {
 }
 
 function saveAndShare() {
+    const existingWriting = localStorage.getItem('sharedWriting');
     const writing = {
         prompt: promptElement.textContent,
         text: textArea.value
     };
 
+    let combinedWriting;
+    if (existingWriting) {
+        combinedWriting = JSON.parse(existingWriting);
+        combinedWriting.responses.push(writing);
+    } else {
+        combinedWriting = {
+            prompt: writing.prompt,
+            responses: [writing]
+        };
+    }
+
     const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    localStorage.setItem(id, JSON.stringify(writing));
+    localStorage.setItem(id, JSON.stringify(combinedWriting));
 
     const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
     shareBtn.style.display = 'inline-block';
@@ -187,7 +199,12 @@ function loadSharedWriting() {
             const data = JSON.parse(savedWriting);
             promptElement.textContent = data.prompt;
             sharedContent.style.display = 'block';
-            sharedWriting.textContent = data.text;
+            sharedWritingContainer.innerHTML = '';
+            data.responses.forEach(response => {
+                const responseElement = document.createElement('p');
+                responseElement.textContent = response.text;
+                sharedWritingContainer.appendChild(responseElement);
+            });
             textArea.value = '';
             newPromptBtn.disabled = true;
         }
