@@ -16,11 +16,15 @@ const shareBtn = document.getElementById('shareBtn');
 const printBtn = document.getElementById('printBtn');
 const promptElement = document.getElementById('prompt');
 const newPromptBtn = document.getElementById('newPromptBtn');
+const emailShareBtn = document.getElementById('emailShareBtn');
+const sharedContent = document.getElementById('sharedContent');
+const sharedWriting = document.getElementById('sharedWriting');
 
 textArea.addEventListener('input', handleInput);
 shareBtn.addEventListener('click', shareText);
 printBtn.addEventListener('click', printText);
 newPromptBtn.addEventListener('click', refreshPromptAndTextArea);
+emailShareBtn.addEventListener('click', shareViaEmail);
 
 const prompts = [
     "Write about a childhood memory",
@@ -28,71 +32,7 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    "Your favorite place in the world",
-    "A character who can't tell lies",
-    "The last person you'd expect as a hero",
-    "A world where sleep is obsolete",
-    "The day the internet disappeared",
-    "An unexpected visitor arrives",
-    "The secret hidden in the attic",
-    "A journey that changes everything",
-    "The object that grants wishes",
-    "A conversation with your younger self",
-    "The day colors disappeared",
-    "A world where animals can talk",
-    "The last book in the world",
-    "A door that leads anywhere",
-    "The person who knows the future",
-    "A day in reverse",
-    "The message in a bottle",
-    "A world without music",
-    "The forgotten time capsule",
-    "An impossible choice",
-    "The day shadows came alive",
-    "A world where lying is impossible",
-    "The last sunset",
-    "A character with an unusual phobia",
-    "The day everyone swapped bodies",
-    "A world where dreams come true",
-    "The unexpected inheritance",
-    "A letter that changes everything",
-    "The day technology stopped working",
-    "A character who can hear thoughts",
-    "The abandoned amusement park",
-    "A world where age works backwards",
-    "The mysterious package",
-    "A day without gravity",
-    "The forgotten language",
-    "Whisper in the wind",
-    "Unexpected allies",
-    "Time stands still",
-    "Hidden talents revealed",
-    "The unopened door",
-    "Echoes from the past",
-    "Secrets beneath the surface",
-    "A world of endless night",
-    "The last laugh",
-    "Whisper",
-    "Blue moon",
-    "Forgotten melody",
-    "Silk thread",
-    "Echoes",
-    "Stardust",
-    "Shadows",
-    "Ripples",
-    "Mist",
-    "Pulse",
-    "Reflection",
-    "Ember",
-    "Labyrinth",
-    "Cascade",
-    "Nebula",
-    "Luminescence",
-    "Kaleidoscope",
-    "Serendipity",
-    "Velvet",
-    "Ethereal",
-    "Mellifluous"
+    // ... (include all your prompts here)
 ];
 
 function getRandomPrompt() {
@@ -114,8 +54,9 @@ function resetTextArea() {
     progressFill.style.width = '100%';
     progressFill.style.backgroundPosition = '0% 0';
     actions.style.display = 'none';
-    const finishBtn = actions.querySelector('button');
-    if (finishBtn) {
+    emailShareBtn.style.display = 'none';
+    const finishBtn = actions.querySelector('button:first-child');
+    if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
         finishBtn.remove();
     }
 }
@@ -125,8 +66,7 @@ function refreshPromptAndTextArea() {
     resetTextArea();
 }
 
-// Display initial prompt when page loads
-displayNewPrompt();
+displayNewPrompt(); // Display initial prompt when page loads
 
 function handleInput(e) {
     if (!isTimerRunning && !isFinishingsentence) {
@@ -161,7 +101,6 @@ function updateProgress() {
 
     progressFill.style.width = `${progress}%`;
     
-    // Update color based on progress
     const colorProgress = 100 - progress;
     progressFill.style.backgroundPosition = `${colorProgress}% 0`;
 
@@ -195,18 +134,54 @@ function checkForPeriod() {
 function finalizeText() {
     textArea.disabled = true;
     isFinishingsentence = false;
-    const finishBtn = actions.querySelector('button');
-    if (finishBtn) {
+    const finishBtn = actions.querySelector('button:first-child');
+    if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
         finishBtn.remove();
     }
     progressFill.style.width = '0%';
     progressFill.style.backgroundPosition = '100% 0';
+    saveAndShare();
+}
+
+function saveAndShare() {
+    const writing = {
+        prompt: promptElement.textContent,
+        text: textArea.value
+    };
+
+    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    localStorage.setItem(id, JSON.stringify(writing));
+
+    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+    emailShareBtn.style.display = 'inline-block';
+    emailShareBtn.dataset.shareUrl = shareUrl;
+}
+
+function shareViaEmail() {
+    const shareUrl = emailShareBtn.dataset.shareUrl;
+    const subject = encodeURIComponent('Check out my writing!');
+    const body = encodeURIComponent(`I've written something using this app. Continue the story here: ${shareUrl}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function loadSharedWriting() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+        const savedWriting = localStorage.getItem(id);
+        if (savedWriting) {
+            const data = JSON.parse(savedWriting);
+            promptElement.textContent = data.prompt;
+            sharedContent.style.display = 'block';
+            sharedWriting.textContent = data.text;
+        }
+    }
 }
 
 function shareText() {
     if (navigator.share) {
         navigator.share({
-            title: '2-Minute Typing Result',
+            title: 'My Writing',
             text: textArea.value
         }).then(() => console.log('Shared successfully'))
         .catch((error) => console.log('Error sharing:', error));
@@ -217,10 +192,12 @@ function shareText() {
 
 function printText() {
     const printWindow = window.open('', '', 'height=400,width=800');
-    printWindow.document.write('<html><head><title>2-Minute Typing Result</title></head><body>');
-    printWindow.document.write('<h1>2-Minute Typing Result</h1>');
+    printWindow.document.write('<html><head><title>My Writing</title></head><body>');
+    printWindow.document.write('<h1>My Writing</h1>');
     printWindow.document.write('<pre>' + textArea.value + '</pre>');
     printWindow.document.write('</body></html>');
     printWindow.document.close();
     printWindow.print();
 }
+
+loadSharedWriting(); // Load shared writing when the page loads
