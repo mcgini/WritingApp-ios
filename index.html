@@ -2,15 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Collaborative Typing App</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <button id="nightModeToggle">Toggle Night Mode</button>
-        <h1>Collaborative Writing App</h1>
+        <div class="header">
+            <h1>Collaborative Typing App</h1>
+            <button id="nightModeToggle" aria-label="Toggle Night Mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
         <div id="promptContainer">
             <p id="prompt"></p>
             <button id="newPromptBtn" aria-label="New Prompt"><i class="fas fa-sync-alt"></i></button>
@@ -31,4 +35,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
