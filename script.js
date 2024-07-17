@@ -168,22 +168,22 @@ function saveAndShare() {
 
     combinedWriting.responses.push(textArea.value);
 
-    const id = existingId || (Date.now().toString(36) + Math.random().toString(36).substr(2));
+    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
     localStorage.setItem(id, JSON.stringify(combinedWriting));
 
     const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
 
-    // Display the current response
+    // Display all responses including the current one
     displayResponses(combinedWriting);
 }
 
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
     const shareData = {
-        title: 'Collaborate on my writing!',
-        text: `I've written something using this app. Continue the story or write your own response here:`,
+        title: 'Collaborate on our writing!',
+        text: `We've been writing collaboratively. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
