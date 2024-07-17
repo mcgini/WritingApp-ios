@@ -10,22 +10,20 @@
 <body>
     <div class="container">
         <h1>Collaborative Typing App</h1>
-        <div id="sharedContent" style="display: none;">
-            <h2>Previous Response:</h2>
-            <p id="sharedWriting"></p>
-        </div>
         <div id="promptContainer">
             <p id="prompt"></p>
             <button id="newPromptBtn" aria-label="New Prompt"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div id="sharedContent" style="display: none;">
+            <h2>Previous Response:</h2>
+            <p id="sharedWriting"></p>
         </div>
         <div id="progressBar">
             <div id="progressFill"></div>
         </div>
         <textarea id="textArea" placeholder="Start typing to begin the timer..."></textarea>
         <div id="actions" style="display: none;">
-            <button id="shareBtn">Share</button>
-            <button id="printBtn">Print</button>
-            <button id="emailShareBtn" style="display: none;">Share via Email</button>
+            <button id="shareBtn">Share Response</button>
         </div>
     </div>
     <script src="script.js"></script>
