@@ -72,6 +72,38 @@ body.night-mode #sharedContent {
     background-color: #45a049;
 }
 
+body.night-mode h1 {
+    color: #ffffff;  /* Bright white for better contrast in dark mode */
+}
+
+#nightModeToggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 1000;  /* Ensure the button is always on top */
+}
+
+#nightModeToggle:hover {
+    background-color: #45a049;
+}
+
+/* Adjust the container to make room for the toggle button */
+.container {
+    position: relative;
+    padding-top: 40px;  /* Increase top padding to make room for the button */
+}
+
+/* Adjust the h1 styles */
+h1 {
+    margin-top: 0;  /* Remove top margin to compensate for increased container padding */
+}
+
 h1 {
     color: #333;
     margin-bottom: 15px;
