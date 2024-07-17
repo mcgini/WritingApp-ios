@@ -64,6 +64,8 @@ function resetTextArea() {
 function refreshPromptAndTextArea() {
     displayNewPrompt();
     resetTextArea();
+    sharedContent.style.display = 'none';
+    sharedWritingContainer.innerHTML = '';
 }
 
 displayNewPrompt(); // Display initial prompt when page loads
@@ -146,29 +148,35 @@ function finalizeText() {
 }
 
 function saveAndShare() {
-    const existingWriting = localStorage.getItem('sharedWriting');
-    const writing = {
-        prompt: promptElement.textContent,
-        text: textArea.value
-    };
-
+    const urlParams = new URLSearchParams(window.location.search);
+    const existingId = urlParams.get('id');
     let combinedWriting;
-    if (existingWriting) {
-        combinedWriting = JSON.parse(existingWriting);
-        combinedWriting.responses.push(writing);
-    } else {
+
+    if (existingId) {
+        const existingWriting = localStorage.getItem(existingId);
+        if (existingWriting) {
+            combinedWriting = JSON.parse(existingWriting);
+        }
+    }
+
+    if (!combinedWriting) {
         combinedWriting = {
-            prompt: writing.prompt,
-            responses: [writing]
+            prompt: promptElement.textContent,
+            responses: []
         };
     }
 
-    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    combinedWriting.responses.push(textArea.value);
+
+    const id = existingId || (Date.now().toString(36) + Math.random().toString(36).substr(2));
     localStorage.setItem(id, JSON.stringify(combinedWriting));
 
     const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
+
+    // Display the current response
+    displayResponses(combinedWriting);
 }
 
 function shareResponse() {
@@ -190,6 +198,16 @@ function shareResponse() {
     }
 }
 
+function displayResponses(writing) {
+    sharedContent.style.display = 'block';
+    sharedWritingContainer.innerHTML = '';
+    writing.responses.forEach((response, index) => {
+        const responseElement = document.createElement('p');
+        responseElement.textContent = `Response ${index + 1}: ${response}`;
+        sharedWritingContainer.appendChild(responseElement);
+    });
+}
+
 function loadSharedWriting() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
@@ -198,13 +216,7 @@ function loadSharedWriting() {
         if (savedWriting) {
             const data = JSON.parse(savedWriting);
             promptElement.textContent = data.prompt;
-            sharedContent.style.display = 'block';
-            sharedWritingContainer.innerHTML = '';
-            data.responses.forEach(response => {
-                const responseElement = document.createElement('p');
-                responseElement.textContent = response.text;
-                sharedWritingContainer.appendChild(responseElement);
-            });
+            displayResponses(data);
             textArea.value = '';
             newPromptBtn.disabled = true;
         }
