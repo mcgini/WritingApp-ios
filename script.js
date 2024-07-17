@@ -118,6 +118,7 @@ function resetTextArea() {
     if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
         finishBtn.remove();
     }
+    newPromptBtn.disabled = false; // Re-enable the new prompt button
 }
 
 function refreshPromptAndTextArea() {
@@ -245,8 +246,8 @@ function loadSharedWriting() {
             promptElement.textContent = data.prompt;
             sharedContent.style.display = 'block';
             sharedWriting.textContent = data.text;
-            // Reset the text area for the new user to write their response
             textArea.value = '';
+            newPromptBtn.disabled = true; // Disable the new prompt button
         }
     }
 }
