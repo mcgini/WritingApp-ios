@@ -20,6 +20,19 @@ body {
     max-width: 500px;
 }
 
+h1 {
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#sharedContent {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: left;
+}
+
 #promptContainer {
     margin-bottom: 20px;
     padding: 10px;
@@ -78,12 +91,31 @@ body {
     padding: 10px;
     resize: none;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
 }
 
 button {
     margin: 5px;
-    padding: 5px 10px;
+    padding: 8px 15px;
     cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#emailShareBtn {
+    background-color: #008CBA;
+}
+
+#emailShareBtn:hover {
+    background-color: #007B9A;
 }
 
 @media (max-width: 600px) {
