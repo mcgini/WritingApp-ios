@@ -8,13 +8,6 @@ let isFinishingsentence = false;
 const TOTAL_TIME = 120000; // 120 seconds (2 minutes) in milliseconds
 const TYPING_INTERVAL = 300; // 300ms pause to detect typing stop
 
-// Check localStorage availability
-if (typeof(Storage) !== "undefined") {
-    console.log("localStorage is available");
-} else {
-    console.log("localStorage is not supported");
-}
-
 const progressBar = document.getElementById('progressBar');
 const progressFill = document.getElementById('progressFill');
 const textArea = document.getElementById('textArea');
@@ -68,8 +61,6 @@ function resetTextArea() {
     finishEarlyBtn.style.display = 'none';
     shareBtn.style.display = 'none';
     newPromptBtn.disabled = false;
-    newPromptBtn.style.pointerEvents = 'auto';
-    newPromptBtn.style.opacity = '1';
 }
 
 function refreshPromptAndTextArea() {
@@ -180,20 +171,15 @@ function saveAndShare() {
     const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
     localStorage.setItem(id, JSON.stringify(combinedWriting));
 
-    console.log('Saved data:', JSON.stringify(combinedWriting)); // Log the saved data
-
     const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
-
-    console.log('Share URL:', shareUrl); // Log the share URL
 
     displayResponses(combinedWriting.responses.slice(0, -1));
 }
 
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
-    console.log('Sharing URL:', shareUrl); // Log the URL being shared
     const shareData = {
         title: 'Collaborate on our writing!',
         text: `We've been writing collaboratively. Continue the story or write your own response here:`,
@@ -228,23 +214,15 @@ function displayResponses(responses) {
 function loadSharedWriting() {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('id');
-    console.log('Loading shared writing with ID:', id); // Log the ID being loaded
     if (id) {
         const savedWriting = localStorage.getItem(id);
-        console.log('Loaded data:', savedWriting); // Log the loaded data
         if (savedWriting) {
             const data = JSON.parse(savedWriting);
             promptElement.textContent = data.prompt;
             displayResponses(data.responses);
             textArea.value = '';
             newPromptBtn.disabled = true;
-            newPromptBtn.style.pointerEvents = 'none';
-            newPromptBtn.style.opacity = '0.5';
-        } else {
-            console.log('No data found for ID:', id); // Log if no data found
         }
-    } else {
-        console.log('No ID in URL parameters'); // Log if no ID in URL
     }
 }
 
@@ -263,7 +241,7 @@ function loadNightModeState() {
 function initApp() {
     loadSharedWriting();
     loadNightModeState();
-    displayNewPrompt(); // Display initial prompt when page loads
+    displayNewPrompt();
 }
 
 // Call initApp when the page loads
