@@ -79,8 +79,6 @@ function refreshPromptAndTextArea() {
     sharedWritingContainer.innerHTML = '';
 }
 
-displayNewPrompt(); // Display initial prompt when page loads
-
 function handleInput(e) {
     if (!isTimerRunning && !isFinishingsentence) {
         startTimer();
@@ -134,7 +132,7 @@ function endTimer() {
     isFinishingsentence = true;
     finishEarlyBtn.style.display = 'none';
     
-    alert("Great writing! You can finish your current sentence. It will automatically finish when you type a period.");
+    alert("Time's up! You can finish your current sentence. Click 'Finish Early' when done, or it will automatically finish when you type a period.");
 }
 
 function checkForPeriod() {
@@ -198,7 +196,7 @@ function shareResponse() {
     console.log('Sharing URL:', shareUrl); // Log the URL being shared
     const shareData = {
         title: 'Collaborate on our writing!',
-        text: `We've been writing collaboratively. Continue, comment or write your own response here:`,
+        text: `We've been writing collaboratively. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
@@ -252,20 +250,21 @@ function loadSharedWriting() {
 
 function toggleNightMode() {
     document.body.classList.toggle('night-mode');
-    
-    // Save the night mode state to localStorage
-    if (document.body.classList.contains('night-mode')) {
-        localStorage.setItem('nightMode', 'enabled');
-    } else {
-        localStorage.setItem('nightMode', 'disabled');
-    }
+    localStorage.setItem('nightMode', document.body.classList.contains('night-mode'));
 }
 
 function loadNightModeState() {
-    if (localStorage.getItem('nightMode') === 'enabled') {
+    if (localStorage.getItem('nightMode') === 'true') {
         document.body.classList.add('night-mode');
     }
 }
 
-loadSharedWriting(); // Load shared writing when the page loads
-loadNightModeState(); // Load night mode state when the page loads
+// Initialize the app
+function initApp() {
+    loadSharedWriting();
+    loadNightModeState();
+    displayNewPrompt(); // Display initial prompt when page loads
+}
+
+// Call initApp when the page loads
+window.addEventListener('load', initApp);
