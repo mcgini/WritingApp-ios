@@ -17,10 +17,12 @@ const promptElement = document.getElementById('prompt');
 const newPromptBtn = document.getElementById('newPromptBtn');
 const sharedContent = document.getElementById('sharedContent');
 const sharedWriting = document.getElementById('sharedWriting');
+const finishEarlyBtn = document.getElementById('finishEarlyBtn');
 
 textArea.addEventListener('input', handleInput);
 shareBtn.addEventListener('click', shareResponse);
 newPromptBtn.addEventListener('click', refreshPromptAndTextArea);
+finishEarlyBtn.addEventListener('click', finishEarly);
 
 const prompts = [
     "Write about a childhood memory",
@@ -28,7 +30,11 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    // ... (include all your prompts here)
+    "Your favorite place in the world",
+    "A character who can't tell lies",
+    "The last person you'd expect as a hero",
+    "A world where sleep is obsolete",
+    "The day the internet disappeared"
 ];
 
 function getRandomPrompt() {
@@ -50,10 +56,9 @@ function resetTextArea() {
     progressFill.style.width = '100%';
     progressFill.style.backgroundPosition = '0% 0';
     actions.style.display = 'none';
-    const finishBtn = actions.querySelector('button:first-child');
-    if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
-        finishBtn.remove();
-    }
+    finishEarlyBtn.style.display = 'none';
+    shareBtn.style.display = 'none';
+    newPromptBtn.disabled = false;
 }
 
 function refreshPromptAndTextArea() {
@@ -78,6 +83,9 @@ function startTimer() {
     isTimerRunning = true;
     startTime = Date.now() - pausedTime;
     updateProgress();
+    actions.style.display = 'block';
+    finishEarlyBtn.style.display = 'inline-block';
+    shareBtn.style.display = 'none';
 }
 
 function pauseTimer() {
@@ -109,15 +117,11 @@ function updateProgress() {
 function endTimer() {
     isTimerRunning = false;
     clearTimeout(typingTimer);
+    cancelAnimationFrame(animationFrameId);
     isFinishingsentence = true;
+    finishEarlyBtn.style.display = 'none';
     
-    const finishBtn = document.createElement('button');
-    finishBtn.textContent = 'Finish Sentence';
-    finishBtn.onclick = finalizeText;
-    actions.insertBefore(finishBtn, actions.firstChild);
-    actions.style.display = 'block';
-    
-    alert("Time's up! You can finish your current sentence. Click 'Finish Sentence' when done, or it will automatically finish when you type a period.");
+    alert("Time's up! You can finish your current sentence. Click 'Finish Early' when done, or it will automatically finish when you type a period.");
 }
 
 function checkForPeriod() {
@@ -126,13 +130,16 @@ function checkForPeriod() {
     }
 }
 
+function finishEarly() {
+    if (confirm("Are you sure you want to finish early? You won't be able to continue writing.")) {
+        endTimer();
+        finalizeText();
+    }
+}
+
 function finalizeText() {
     textArea.disabled = true;
     isFinishingsentence = false;
-    const finishBtn = actions.querySelector('button:first-child');
-    if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
-        finishBtn.remove();
-    }
     progressFill.style.width = '0%';
     progressFill.style.backgroundPosition = '100% 0';
     saveAndShare();
@@ -155,8 +162,8 @@ function saveAndShare() {
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
     const shareData = {
-        title: 'Check out my writing!',
-        text: `I've written something using this app. Continue the story here:`,
+        title: 'Collaborate on my writing!',
+        text: `I've written something using this app. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
@@ -181,6 +188,8 @@ function loadSharedWriting() {
             promptElement.textContent = data.prompt;
             sharedContent.style.display = 'block';
             sharedWriting.textContent = data.text;
+            textArea.value = '';
+            newPromptBtn.disabled = true;
         }
     }
 }

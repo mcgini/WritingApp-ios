@@ -116,6 +116,14 @@ button:hover {
     background-color: #45a049;
 }
 
+#finishEarlyBtn {
+    background-color: #f44336;
+}
+
+#finishEarlyBtn:hover {
+    background-color: #d32f2f;
+}
+
 @media (max-width: 600px) {
     body {
         padding: 5px;
