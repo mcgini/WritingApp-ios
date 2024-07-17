@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mobile Typing App</title>
+    <title>Typing App</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <div class="app-container">
-        <header>
-            <h1>Typing App</h1>
-        </header>
-        <main>
-            <div class="prompt-container">
-                <p id="prompt"></p>
-                <button id="newPromptBtn" aria-label="New Prompt"><i class="fas fa-sync-alt"></i></button>
-            </div>
-            <div class="progress-container">
-                <div id="progressBar"></div>
-            </div>
-            <textarea id="textArea" placeholder="Start typing to begin the timer..."></textarea>
-            <div id="actions" class="hidden">
-                <button id="shareBtn">Share</button>
-                <button id="printBtn">Print</button>
-            </div>
-        </main>
+    <div class="container">
+        <h1>Typing App</h1>
+        <div id="promptContainer">
+            <p id="prompt"></p>
+            <button id="newPromptBtn" aria-label="New Prompt"><i class="fas fa-sync-alt"></i></button>
+        </div>
+        <div id="progressBar">
+            <div id="progressFill"></div>
+        </div>
+        <textarea id="textArea" placeholder="Start typing to begin the timer..."></textarea>
+        <div id="actions" style="display: none;">
+            <button id="shareBtn">Share</button>
+            <button id="printBtn">Print</button>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>

@@ -1,13 +1,15 @@
 let isTimerRunning = false;
-let pauseTimeout;
+let typingTimer;
 let startTime;
 let pausedTime = 0;
 let animationFrameId;
 let isFinishingsentence = false;
 
 const TOTAL_TIME = 120000; // 120 seconds (2 minutes) in milliseconds
+const TYPING_INTERVAL = 300; // 300ms pause to detect typing stop
 
 const progressBar = document.getElementById('progressBar');
+const progressFill = document.getElementById('progressFill');
 const textArea = document.getElementById('textArea');
 const actions = document.getElementById('actions');
 const shareBtn = document.getElementById('shareBtn');
@@ -26,7 +28,71 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    // ... (rest of the prompts)
+    "Your favorite place in the world",
+    "A character who can't tell lies",
+    "The last person you'd expect as a hero",
+    "A world where sleep is obsolete",
+    "The day the internet disappeared",
+    "An unexpected visitor arrives",
+    "The secret hidden in the attic",
+    "A journey that changes everything",
+    "The object that grants wishes",
+    "A conversation with your younger self",
+    "The day colors disappeared",
+    "A world where animals can talk",
+    "The last book in the world",
+    "A door that leads anywhere",
+    "The person who knows the future",
+    "A day in reverse",
+    "The message in a bottle",
+    "A world without music",
+    "The forgotten time capsule",
+    "An impossible choice",
+    "The day shadows came alive",
+    "A world where lying is impossible",
+    "The last sunset",
+    "A character with an unusual phobia",
+    "The day everyone swapped bodies",
+    "A world where dreams come true",
+    "The unexpected inheritance",
+    "A letter that changes everything",
+    "The day technology stopped working",
+    "A character who can hear thoughts",
+    "The abandoned amusement park",
+    "A world where age works backwards",
+    "The mysterious package",
+    "A day without gravity",
+    "The forgotten language",
+    "Whisper in the wind",
+    "Unexpected allies",
+    "Time stands still",
+    "Hidden talents revealed",
+    "The unopened door",
+    "Echoes from the past",
+    "Secrets beneath the surface",
+    "A world of endless night",
+    "The last laugh",
+    "Whisper",
+    "Blue moon",
+    "Forgotten melody",
+    "Silk thread",
+    "Echoes",
+    "Stardust",
+    "Shadows",
+    "Ripples",
+    "Mist",
+    "Pulse",
+    "Reflection",
+    "Ember",
+    "Labyrinth",
+    "Cascade",
+    "Nebula",
+    "Luminescence",
+    "Kaleidoscope",
+    "Serendipity",
+    "Velvet",
+    "Ethereal",
+    "Mellifluous"
 ];
 
 function getRandomPrompt() {
@@ -43,10 +109,15 @@ function resetTextArea() {
     isTimerRunning = false;
     isFinishingsentence = false;
     pausedTime = 0;
-    clearTimeout(pauseTimeout);
+    clearTimeout(typingTimer);
     cancelAnimationFrame(animationFrameId);
-    progressBar.style.width = '100%';
-    actions.classList.add('hidden');
+    progressFill.style.width = '100%';
+    progressFill.style.backgroundPosition = '0% 0';
+    actions.style.display = 'none';
+    const finishBtn = actions.querySelector('button');
+    if (finishBtn) {
+        finishBtn.remove();
+    }
 }
 
 function refreshPromptAndTextArea() {
@@ -61,8 +132,8 @@ function handleInput(e) {
     if (!isTimerRunning && !isFinishingsentence) {
         startTimer();
     } else if (isTimerRunning) {
-        clearTimeout(pauseTimeout);
-        pauseTimeout = setTimeout(pauseTimer, 2000); // 2 seconds pause
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(pauseTimer, TYPING_INTERVAL);
     } else if (isFinishingsentence) {
         checkForPeriod();
     }
@@ -71,7 +142,6 @@ function handleInput(e) {
 function startTimer() {
     isTimerRunning = true;
     startTime = Date.now() - pausedTime;
-    cancelAnimationFrame(animationFrameId);
     updateProgress();
 }
 
@@ -89,7 +159,11 @@ function updateProgress() {
     const remainingTime = Math.max(TOTAL_TIME - elapsedTime, 0);
     const progress = (remainingTime / TOTAL_TIME) * 100;
 
-    progressBar.style.width = `${progress}%`;
+    progressFill.style.width = `${progress}%`;
+    
+    // Update color based on progress
+    const colorProgress = 100 - progress;
+    progressFill.style.backgroundPosition = `${colorProgress}% 0`;
 
     if (remainingTime > 0) {
         animationFrameId = requestAnimationFrame(updateProgress);
@@ -100,10 +174,16 @@ function updateProgress() {
 
 function endTimer() {
     isTimerRunning = false;
-    clearTimeout(pauseTimeout);
+    clearTimeout(typingTimer);
     isFinishingsentence = true;
-    actions.classList.remove('hidden');
-    alert("Time's up! You can finish your current sentence. Click 'Share' or 'Print' when done, or it will automatically finish when you type a period.");
+    
+    const finishBtn = document.createElement('button');
+    finishBtn.textContent = 'Finish Sentence';
+    finishBtn.onclick = finalizeText;
+    actions.insertBefore(finishBtn, actions.firstChild);
+    actions.style.display = 'block';
+    
+    alert("Time's up! You can finish your current sentence. Click 'Finish Sentence' when done, or it will automatically finish when you type a period.");
 }
 
 function checkForPeriod() {
@@ -115,7 +195,12 @@ function checkForPeriod() {
 function finalizeText() {
     textArea.disabled = true;
     isFinishingsentence = false;
-    progressBar.style.width = '0%';
+    const finishBtn = actions.querySelector('button');
+    if (finishBtn) {
+        finishBtn.remove();
+    }
+    progressFill.style.width = '0%';
+    progressFill.style.backgroundPosition = '100% 0';
 }
 
 function shareText() {
