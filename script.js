@@ -175,8 +175,8 @@ function saveAndShare() {
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
 
-    // Display all responses including the current one
-    displayResponses(combinedWriting);
+    // Display only previous responses, not including the current one
+    displayResponses(combinedWriting.responses.slice(0, -1));
 }
 
 function shareResponse() {
@@ -198,14 +198,18 @@ function shareResponse() {
     }
 }
 
-function displayResponses(writing) {
-    sharedContent.style.display = 'block';
-    sharedWritingContainer.innerHTML = '';
-    writing.responses.forEach((response, index) => {
-        const responseElement = document.createElement('p');
-        responseElement.textContent = `Response ${index + 1}: ${response}`;
-        sharedWritingContainer.appendChild(responseElement);
-    });
+function displayResponses(responses) {
+    if (responses.length > 0) {
+        sharedContent.style.display = 'block';
+        sharedWritingContainer.innerHTML = '';
+        responses.forEach((response, index) => {
+            const responseElement = document.createElement('p');
+            responseElement.textContent = `Response ${index + 1}: ${response}`;
+            sharedWritingContainer.appendChild(responseElement);
+        });
+    } else {
+        sharedContent.style.display = 'none';
+    }
 }
 
 function loadSharedWriting() {
@@ -216,7 +220,7 @@ function loadSharedWriting() {
         if (savedWriting) {
             const data = JSON.parse(savedWriting);
             promptElement.textContent = data.prompt;
-            displayResponses(data);
+            displayResponses(data.responses);
             textArea.value = '';
             newPromptBtn.disabled = true;
         }
