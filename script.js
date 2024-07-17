@@ -13,18 +13,14 @@ const progressFill = document.getElementById('progressFill');
 const textArea = document.getElementById('textArea');
 const actions = document.getElementById('actions');
 const shareBtn = document.getElementById('shareBtn');
-const printBtn = document.getElementById('printBtn');
 const promptElement = document.getElementById('prompt');
 const newPromptBtn = document.getElementById('newPromptBtn');
-const emailShareBtn = document.getElementById('emailShareBtn');
 const sharedContent = document.getElementById('sharedContent');
 const sharedWriting = document.getElementById('sharedWriting');
 
 textArea.addEventListener('input', handleInput);
-shareBtn.addEventListener('click', shareText);
-printBtn.addEventListener('click', printText);
+shareBtn.addEventListener('click', shareResponse);
 newPromptBtn.addEventListener('click', refreshPromptAndTextArea);
-emailShareBtn.addEventListener('click', shareViaEmail);
 
 const prompts = [
     "Write about a childhood memory",
@@ -54,7 +50,6 @@ function resetTextArea() {
     progressFill.style.width = '100%';
     progressFill.style.backgroundPosition = '0% 0';
     actions.style.display = 'none';
-    emailShareBtn.style.display = 'none';
     const finishBtn = actions.querySelector('button:first-child');
     if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
         finishBtn.remove();
@@ -153,15 +148,27 @@ function saveAndShare() {
     localStorage.setItem(id, JSON.stringify(writing));
 
     const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
-    emailShareBtn.style.display = 'inline-block';
-    emailShareBtn.dataset.shareUrl = shareUrl;
+    shareBtn.style.display = 'inline-block';
+    shareBtn.dataset.shareUrl = shareUrl;
 }
 
-function shareViaEmail() {
-    const shareUrl = emailShareBtn.dataset.shareUrl;
-    const subject = encodeURIComponent('Check out my writing!');
-    const body = encodeURIComponent(`I've written something using this app. Continue the story here: ${shareUrl}`);
-    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+function shareResponse() {
+    const shareUrl = shareBtn.dataset.shareUrl;
+    const shareData = {
+        title: 'Check out my writing!',
+        text: `I've written something using this app. Continue the story here:`,
+        url: shareUrl
+    };
+
+    if (navigator.share) {
+        navigator.share(shareData)
+            .then(() => console.log('Shared successfully'))
+            .catch((error) => console.log('Error sharing:', error));
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        const emailBody = encodeURIComponent(`${shareData.text} ${shareUrl}`);
+        window.location.href = `mailto:?subject=${encodeURIComponent(shareData.title)}&body=${emailBody}`;
+    }
 }
 
 function loadSharedWriting() {
@@ -176,28 +183,6 @@ function loadSharedWriting() {
             sharedWriting.textContent = data.text;
         }
     }
-}
-
-function shareText() {
-    if (navigator.share) {
-        navigator.share({
-            title: 'My Writing',
-            text: textArea.value
-        }).then(() => console.log('Shared successfully'))
-        .catch((error) => console.log('Error sharing:', error));
-    } else {
-        alert('Web Share API not supported in your browser');
-    }
-}
-
-function printText() {
-    const printWindow = window.open('', '', 'height=400,width=800');
-    printWindow.document.write('<html><head><title>My Writing</title></head><body>');
-    printWindow.document.write('<h1>My Writing</h1>');
-    printWindow.document.write('<pre>' + textArea.value + '</pre>');
-    printWindow.document.write('</body></html>');
-    printWindow.document.close();
-    printWindow.print();
 }
 
 loadSharedWriting(); // Load shared writing when the page loads
