@@ -134,7 +134,7 @@ function endTimer() {
     isFinishingsentence = true;
     finishEarlyBtn.style.display = 'none';
     
-    alert("Time's up! You can finish your current sentence. Click 'Finish Early' when done, or it will automatically finish when you type a period.");
+    alert("Great writing! You can finish your current sentence. It will automatically finish when you type a period.");
 }
 
 function checkForPeriod() {
@@ -198,7 +198,7 @@ function shareResponse() {
     console.log('Sharing URL:', shareUrl); // Log the URL being shared
     const shareData = {
         title: 'Collaborate on our writing!',
-        text: `We've been writing collaboratively. Continue the story or write your own response here:`,
+        text: `We've been writing collaboratively. Continue, comment or write your own response here:`,
         url: shareUrl
     };
 
