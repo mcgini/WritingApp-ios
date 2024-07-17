@@ -25,11 +25,13 @@ const newPromptBtn = document.getElementById('newPromptBtn');
 const sharedContent = document.getElementById('sharedContent');
 const sharedWritingContainer = document.getElementById('sharedWritingContainer');
 const finishEarlyBtn = document.getElementById('finishEarlyBtn');
+const nightModeToggle = document.getElementById('nightModeToggle');
 
 textArea.addEventListener('input', handleInput);
 shareBtn.addEventListener('click', shareResponse);
 newPromptBtn.addEventListener('click', refreshPromptAndTextArea);
 finishEarlyBtn.addEventListener('click', finishEarly);
+nightModeToggle.addEventListener('click', toggleNightMode);
 
 const prompts = [
     "Write about a childhood memory",
@@ -248,4 +250,22 @@ function loadSharedWriting() {
     }
 }
 
+function toggleNightMode() {
+    document.body.classList.toggle('night-mode');
+    
+    // Save the night mode state to localStorage
+    if (document.body.classList.contains('night-mode')) {
+        localStorage.setItem('nightMode', 'enabled');
+    } else {
+        localStorage.setItem('nightMode', 'disabled');
+    }
+}
+
+function loadNightModeState() {
+    if (localStorage.getItem('nightMode') === 'enabled') {
+        document.body.classList.add('night-mode');
+    }
+}
+
 loadSharedWriting(); // Load shared writing when the page loads
+loadNightModeState(); // Load night mode state when the page loads

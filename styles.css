@@ -15,6 +15,63 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+body.night-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.night-mode .container {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 10px rgba(255,255,255,0.1);
+}
+
+body.night-mode #promptContainer {
+    background-color: #3a3a3a;
+}
+
+body.night-mode #textArea {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #4a4a4a;
+}
+
+body.night-mode button {
+    background-color: #4a4a4a;
+    color: #f0f0f0;
+}
+
+body.night-mode button:hover {
+    background-color: #5a5a5a;
+}
+
+body.night-mode #finishEarlyBtn {
+    background-color: #8b0000;
+}
+
+body.night-mode #finishEarlyBtn:hover {
+    background-color: #a00000;
+}
+
+body.night-mode #sharedContent {
+    background-color: #3a3a3a;
+}
+
+#nightModeToggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#nightModeToggle:hover {
+    background-color: #45a049;
+}
+
 h1 {
     color: #333;
     margin-bottom: 15px;
