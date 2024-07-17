@@ -28,7 +28,71 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    // ... (include all your prompts here)
+    "Your favorite place in the world",
+    "A character who can't tell lies",
+    "The last person you'd expect as a hero",
+    "A world where sleep is obsolete",
+    "The day the internet disappeared",
+    "An unexpected visitor arrives",
+    "The secret hidden in the attic",
+    "A journey that changes everything",
+    "The object that grants wishes",
+    "A conversation with your younger self",
+    "The day colors disappeared",
+    "A world where animals can talk",
+    "The last book in the world",
+    "A door that leads anywhere",
+    "The person who knows the future",
+    "A day in reverse",
+    "The message in a bottle",
+    "A world without music",
+    "The forgotten time capsule",
+    "An impossible choice",
+    "The day shadows came alive",
+    "A world where lying is impossible",
+    "The last sunset",
+    "A character with an unusual phobia",
+    "The day everyone swapped bodies",
+    "A world where dreams come true",
+    "The unexpected inheritance",
+    "A letter that changes everything",
+    "The day technology stopped working",
+    "A character who can hear thoughts",
+    "The abandoned amusement park",
+    "A world where age works backwards",
+    "The mysterious package",
+    "A day without gravity",
+    "The forgotten language",
+    "Whisper in the wind",
+    "Unexpected allies",
+    "Time stands still",
+    "Hidden talents revealed",
+    "The unopened door",
+    "Echoes from the past",
+    "Secrets beneath the surface",
+    "A world of endless night",
+    "The last laugh",
+    "Whisper",
+    "Blue moon",
+    "Forgotten melody",
+    "Silk thread",
+    "Echoes",
+    "Stardust",
+    "Shadows",
+    "Ripples",
+    "Mist",
+    "Pulse",
+    "Reflection",
+    "Ember",
+    "Labyrinth",
+    "Cascade",
+    "Nebula",
+    "Luminescence",
+    "Kaleidoscope",
+    "Serendipity",
+    "Velvet",
+    "Ethereal",
+    "Mellifluous"
 ];
 
 function getRandomPrompt() {
@@ -54,6 +118,7 @@ function resetTextArea() {
     if (finishBtn && finishBtn.textContent === 'Finish Sentence') {
         finishBtn.remove();
     }
+    newPromptBtn.disabled = false; // Re-enable the new prompt button
 }
 
 function refreshPromptAndTextArea() {
@@ -155,8 +220,8 @@ function saveAndShare() {
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
     const shareData = {
-        title: 'Check out my writing!',
-        text: `I've written something using this app. Continue the story here:`,
+        title: 'Collaborate on my writing!',
+        text: `I've written something using this app. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
@@ -181,6 +246,8 @@ function loadSharedWriting() {
             promptElement.textContent = data.prompt;
             sharedContent.style.display = 'block';
             sharedWriting.textContent = data.text;
+            textArea.value = '';
+            newPromptBtn.disabled = true; // Disable the new prompt button
         }
     }
 }
