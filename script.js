@@ -28,7 +28,11 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    // ... (include all your prompts here)
+    "Your favorite place in the world",
+    "A character who can't tell lies",
+    "The last person you'd expect as a hero",
+    "A world where sleep is obsolete",
+    "The day the internet disappeared"
 ];
 
 function getRandomPrompt() {
@@ -155,8 +159,8 @@ function saveAndShare() {
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
     const shareData = {
-        title: 'Check out my writing!',
-        text: `I've written something using this app. Continue the story here:`,
+        title: 'Collaborate on my writing!',
+        text: `I've written something using this app. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
@@ -181,6 +185,8 @@ function loadSharedWriting() {
             promptElement.textContent = data.prompt;
             sharedContent.style.display = 'block';
             sharedWriting.textContent = data.text;
+            // Reset the text area for the new user to write their response
+            textArea.value = '';
         }
     }
 }
