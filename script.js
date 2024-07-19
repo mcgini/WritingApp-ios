@@ -32,71 +32,11 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    "Your favourite place in the world",
+    "Your favorite place in the world",
     "A character who can't tell lies",
     "The last person you'd expect as a hero",
     "A world where sleep is obsolete",
-    "The day the internet disappeared",
-    "An unexpected visitor arrives",
-    "The secret hidden in the attic",
-    "A journey that changes everything",
-    "The object that grants wishes",
-    "A conversation with your younger self",
-    "The day colours disappeared",
-    "A world where animals can talk",
-    "The last book in the world",
-    "A door that leads anywhere",
-    "The person who knows the future",
-    "A day in reverse",
-    "The message in a bottle",
-    "A world without music",
-    "The forgotten time capsule",
-    "An impossible choice",
-    "The day shadows came alive",
-    "A world where lying is impossible",
-    "The last sunset",
-    "A character with an unusual phobia",
-    "The day everyone swapped bodies",
-    "A world where dreams come true",
-    "The unexpected inheritance",
-    "A letter that changes everything",
-    "The day technology stopped working",
-    "A character who can hear thoughts",
-    "The abandoned amusement park",
-    "A world where age works backwards",
-    "The mysterious package",
-    "A day without gravity",
-    "The forgotten language",
-    "Whisper in the wind",
-    "Unexpected allies",
-    "Time stands still",
-    "Hidden talents revealed",
-    "The unopened door",
-    "Echoes from the past",
-    "Secrets beneath the surface",
-    "A world of endless night",
-    "The last laugh",
-    "Whisper",
-    "Blue moon",
-    "Forgotten melody",
-    "Silk thread",
-    "Echoes",
-    "Stardust",
-    "Shadows",
-    "Ripples",
-    "Mist",
-    "Pulse",
-    "Reflection",
-    "Ember",
-    "Labyrinth",
-    "Cascade",
-    "Nebula",
-    "Luminescence",
-    "Kaleidoscope",
-    "Serendipity",
-    "Velvet",
-    "Ethereal",
-    "Mellifluous"
+    "The day the internet disappeared"
 ];
 
 function getRandomPrompt() {
@@ -218,20 +158,14 @@ function saveAndShare() {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const existingId = urlParams.get('id');
-    if (existingId) {
-        const existingWriting = localStorage.getItem(existingId);
-        if (existingWriting) {
-            const existingData = JSON.parse(existingWriting);
-            combinedWriting.responses = [...existingData.responses, ...combinedWriting.responses];
-        }
+    const existingResponses = urlParams.get('responses');
+    if (existingResponses) {
+        combinedWriting.responses = [...JSON.parse(decodeURIComponent(existingResponses)), ...combinedWriting.responses];
     }
 
-    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    localStorage.setItem(id, JSON.stringify(combinedWriting));
-
-    const encodedId = encodeURIComponent(id);
-    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${encodedId}`;
+    const encodedPrompt = encodeURIComponent(combinedWriting.prompt);
+    const encodedResponses = encodeURIComponent(JSON.stringify(combinedWriting.responses));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?prompt=${encodedPrompt}&responses=${encodedResponses}`;
 
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
@@ -274,21 +208,15 @@ function displayResponses(responses) {
 
 function loadSharedWriting() {
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
+    const sharedPrompt = urlParams.get('prompt');
+    const sharedResponses = urlParams.get('responses');
 
-    if (id) {
-        const savedWriting = localStorage.getItem(id);
-        if (savedWriting) {
-            const data = JSON.parse(savedWriting);
-            promptElement.textContent = data.prompt;
-            displayResponses(data.responses);
-            textArea.value = '';
-            newPromptBtn.disabled = true;
-        } else {
-            console.log('No data found for ID:', id);
-        }
-    } else {
-        console.log('No ID in URL parameters');
+    if (sharedPrompt && sharedResponses) {
+        promptElement.textContent = decodeURIComponent(sharedPrompt);
+        const responses = JSON.parse(decodeURIComponent(sharedResponses));
+        displayResponses(responses);
+        textArea.value = '';
+        newPromptBtn.disabled = true;
     }
 }
 
