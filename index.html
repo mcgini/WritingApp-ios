@@ -2,26 +2,31 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Collaborative Typing App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Collaborative Writing App</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Collaborative Typing App</h1>
+        <div class="header">
+            <h1>Collaborative Writing App</h1>
+            <button id="nightModeToggle" aria-label="Toggle Night Mode">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
         <div id="promptContainer">
             <p id="prompt"></p>
             <button id="newPromptBtn" aria-label="New Prompt"><i class="fas fa-sync-alt"></i></button>
         </div>
         <div id="sharedContent" style="display: none;">
-            <h2>Previous Response:</h2>
-            <p id="sharedWriting"></p>
+            <h2>Previous Responses:</h2>
+            <div id="sharedWritingContainer"></div>
         </div>
         <div id="progressBar">
             <div id="progressFill"></div>
         </div>
-        <textarea id="textArea" placeholder="Start typing to begin the timer..."></textarea>
+        <textarea id="textArea" placeholder="Start typing..."></textarea>
         <div id="actions" style="display: none;">
             <button id="finishEarlyBtn">Finish Early</button>
             <button id="shareBtn">Share for Collaboration</button>

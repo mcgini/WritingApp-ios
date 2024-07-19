@@ -15,10 +15,26 @@ body {
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
 h1 {
     color: #333;
-    margin-bottom: 15px;
+    margin: 0;
     font-size: 1.5em;
+}
+
+#nightModeToggle {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    color: #333;
+    cursor: pointer;
+    padding: 5px;
 }
 
 #promptContainer {
@@ -29,10 +45,6 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background-color: white;
 }
 
 #prompt {
@@ -51,7 +63,6 @@ h1 {
     color: #555;
     padding: 5px;
     transition: transform 0.3s ease;
-    flex-shrink: 0;
 }
 
 #newPromptBtn:hover {
@@ -66,11 +77,6 @@ h1 {
     border-radius: 5px;
     max-height: 150px;
     overflow-y: auto;
-}
-
-#sharedWriting {
-    margin: 0;
-    word-wrap: break-word;
 }
 
 #progressBar {
@@ -116,14 +122,57 @@ button:hover {
     background-color: #45a049;
 }
 
-#finishEarlyBtn {
-    background-color: #f44336;
+/* Night mode styles */
+body.night-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
 }
 
-#finishEarlyBtn:hover {
-    background-color: #d32f2f;
+body.night-mode .container {
+    background-color: #2a2a2a;
+    box-shadow: 0 0 10px rgba(255,255,255,0.1);
 }
 
+body.night-mode h1 {
+    color: #ffffff;
+}
+
+body.night-mode #nightModeToggle {
+    color: #ffffff;
+}
+
+body.night-mode #promptContainer {
+    background-color: #3a3a3a;
+}
+
+body.night-mode #textArea {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #4a4a4a;
+}
+
+body.night-mode button {
+    background-color: #4a4a4a;
+    color: #f0f0f0;
+}
+
+body.night-mode button:hover {
+    background-color: #5a5a5a;
+}
+
+body.night-mode #finishEarlyBtn {
+    background-color: #8b0000;
+}
+
+body.night-mode #finishEarlyBtn:hover {
+    background-color: #a00000;
+}
+
+body.night-mode #sharedContent {
+    background-color: #3a3a3a;
+}
+
+/* Responsive adjustments */
 @media (max-width: 600px) {
     body {
         padding: 5px;
@@ -133,7 +182,22 @@ button:hover {
         padding: 10px;
     }
 
+    h1 {
+        font-size: 1.2em;
+    }
+
     #textArea {
         height: 120px;
+    }
+}
+
+/* iOS-specific adjustments */
+@supports (-webkit-touch-callout: none) {
+    body {
+        padding-top: env(safe-area-inset-top);
+    }
+
+    .container {
+        padding-top: calc(15px + env(safe-area-inset-top));
     }
 }

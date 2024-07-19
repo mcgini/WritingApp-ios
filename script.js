@@ -16,13 +16,15 @@ const shareBtn = document.getElementById('shareBtn');
 const promptElement = document.getElementById('prompt');
 const newPromptBtn = document.getElementById('newPromptBtn');
 const sharedContent = document.getElementById('sharedContent');
-const sharedWriting = document.getElementById('sharedWriting');
+const sharedWritingContainer = document.getElementById('sharedWritingContainer');
 const finishEarlyBtn = document.getElementById('finishEarlyBtn');
+const nightModeToggle = document.getElementById('nightModeToggle');
 
 textArea.addEventListener('input', handleInput);
 shareBtn.addEventListener('click', shareResponse);
 newPromptBtn.addEventListener('click', refreshPromptAndTextArea);
 finishEarlyBtn.addEventListener('click', finishEarly);
+nightModeToggle.addEventListener('click', toggleNightMode);
 
 const prompts = [
     "Write about a childhood memory",
@@ -64,9 +66,9 @@ function resetTextArea() {
 function refreshPromptAndTextArea() {
     displayNewPrompt();
     resetTextArea();
+    sharedContent.style.display = 'none';
+    sharedWritingContainer.innerHTML = '';
 }
-
-displayNewPrompt(); // Display initial prompt when page loads
 
 function handleInput(e) {
     if (!isTimerRunning && !isFinishingsentence) {
@@ -146,24 +148,36 @@ function finalizeText() {
 }
 
 function saveAndShare() {
-    const writing = {
+    const combinedWriting = {
         prompt: promptElement.textContent,
-        text: textArea.value
+        responses: []
     };
 
-    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    localStorage.setItem(id, JSON.stringify(writing));
+    if (textArea.value) {
+        combinedWriting.responses.push(textArea.value);
+    }
 
-    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+    const urlParams = new URLSearchParams(window.location.search);
+    const existingResponses = urlParams.get('responses');
+    if (existingResponses) {
+        combinedWriting.responses = [...JSON.parse(decodeURIComponent(existingResponses)), ...combinedWriting.responses];
+    }
+
+    const encodedPrompt = encodeURIComponent(combinedWriting.prompt);
+    const encodedResponses = encodeURIComponent(JSON.stringify(combinedWriting.responses));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?prompt=${encodedPrompt}&responses=${encodedResponses}`;
+
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
+
+    displayResponses(combinedWriting.responses.slice(0, -1));
 }
 
 function shareResponse() {
     const shareUrl = shareBtn.dataset.shareUrl;
     const shareData = {
-        title: 'Collaborate on my writing!',
-        text: `I've written something using this app. Continue the story or write your own response here:`,
+        title: 'Collaborate on our writing!',
+        text: `We've been writing collaboratively. Continue the story or write your own response here:`,
         url: shareUrl
     };
 
@@ -178,20 +192,51 @@ function shareResponse() {
     }
 }
 
-function loadSharedWriting() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    if (id) {
-        const savedWriting = localStorage.getItem(id);
-        if (savedWriting) {
-            const data = JSON.parse(savedWriting);
-            promptElement.textContent = data.prompt;
-            sharedContent.style.display = 'block';
-            sharedWriting.textContent = data.text;
-            textArea.value = '';
-            newPromptBtn.disabled = true;
-        }
+function displayResponses(responses) {
+    if (responses.length > 0) {
+        sharedContent.style.display = 'block';
+        sharedWritingContainer.innerHTML = '';
+        responses.forEach((response, index) => {
+            const responseElement = document.createElement('p');
+            responseElement.textContent = `Response ${index + 1}: ${response}`;
+            sharedWritingContainer.appendChild(responseElement);
+        });
+    } else {
+        sharedContent.style.display = 'none';
     }
 }
 
-loadSharedWriting(); // Load shared writing when the page loads
+function loadSharedWriting() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedPrompt = urlParams.get('prompt');
+    const sharedResponses = urlParams.get('responses');
+
+    if (sharedPrompt && sharedResponses) {
+        promptElement.textContent = decodeURIComponent(sharedPrompt);
+        const responses = JSON.parse(decodeURIComponent(sharedResponses));
+        displayResponses(responses);
+        textArea.value = '';
+        newPromptBtn.disabled = true;
+    }
+}
+
+function toggleNightMode() {
+    document.body.classList.toggle('night-mode');
+    localStorage.setItem('nightMode', document.body.classList.contains('night-mode'));
+}
+
+function loadNightModeState() {
+    if (localStorage.getItem('nightMode') === 'true') {
+        document.body.classList.add('night-mode');
+    }
+}
+
+// Initialize the app
+function initApp() {
+    loadSharedWriting();
+    loadNightModeState();
+    displayNewPrompt();
+}
+
+// Call initApp when the page loads
+window.addEventListener('load', initApp);
