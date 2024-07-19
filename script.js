@@ -123,7 +123,7 @@ function endTimer() {
     isFinishingsentence = true;
     finishEarlyBtn.style.display = 'none';
     
-    alert("Time's up! You can finish your current sentence. Click 'Finish Early' when done, or it will automatically finish when you type a period.");
+    alert("Time's up! Don't worry – you can finish your current sentence. Just add a period when you're done, and the app will automatically stop your writing session.");
 }
 
 function checkForPeriod() {
