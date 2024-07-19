@@ -36,67 +36,7 @@ const prompts = [
     "A character who can't tell lies",
     "The last person you'd expect as a hero",
     "A world where sleep is obsolete",
-    "The day the internet disappeared",
-    "An unexpected visitor arrives",
-    "The secret hidden in the attic",
-    "A journey that changes everything",
-    "The object that grants wishes",
-    "A conversation with your younger self",
-    "The day colors disappeared",
-    "A world where animals can talk",
-    "The last book in the world",
-    "A door that leads anywhere",
-    "The person who knows the future",
-    "A day in reverse",
-    "The message in a bottle",
-    "A world without music",
-    "The forgotten time capsule",
-    "An impossible choice",
-    "The day shadows came alive",
-    "A world where lying is impossible",
-    "The last sunset",
-    "A character with an unusual phobia",
-    "The day everyone swapped bodies",
-    "A world where dreams come true",
-    "The unexpected inheritance",
-    "A letter that changes everything",
-    "The day technology stopped working",
-    "A character who can hear thoughts",
-    "The abandoned amusement park",
-    "A world where age works backwards",
-    "The mysterious package",
-    "A day without gravity",
-    "The forgotten language",
-    "Whisper in the wind",
-    "Unexpected allies",
-    "Time stands still",
-    "Hidden talents revealed",
-    "The unopened door",
-    "Echoes from the past",
-    "Secrets beneath the surface",
-    "A world of endless night",
-    "The last laugh",
-    "Whisper",
-    "Blue moon",
-    "Forgotten melody",
-    "Silk thread",
-    "Echoes",
-    "Stardust",
-    "Shadows",
-    "Ripples",
-    "Mist",
-    "Pulse",
-    "Reflection",
-    "Ember",
-    "Labyrinth",
-    "Cascade",
-    "Nebula",
-    "Luminescence",
-    "Kaleidoscope",
-    "Serendipity",
-    "Velvet",
-    "Ethereal",
-    "Mellifluous"
+    "The day the internet disappeared"
 ];
 
 function getRandomPrompt() {
@@ -183,7 +123,7 @@ function endTimer() {
     isFinishingsentence = true;
     finishEarlyBtn.style.display = 'none';
     
-    alert("Time's up! Don't worry – you can finish your current sentence. Just add a period when you're done, and the app will automatically stop your writing session.");
+    alert("Time's up! You can finish your current sentence. Click 'Finish Early' when done, or it will automatically finish when you type a period.");
 }
 
 function checkForPeriod() {
@@ -208,30 +148,25 @@ function finalizeText() {
 }
 
 function saveAndShare() {
+    const combinedWriting = {
+        prompt: promptElement.textContent,
+        responses: []
+    };
+
+    if (textArea.value) {
+        combinedWriting.responses.push(textArea.value);
+    }
+
     const urlParams = new URLSearchParams(window.location.search);
-    const existingId = urlParams.get('id');
-    let combinedWriting;
-
-    if (existingId) {
-        const existingWriting = localStorage.getItem(existingId);
-        if (existingWriting) {
-            combinedWriting = JSON.parse(existingWriting);
-        }
+    const existingResponses = urlParams.get('responses');
+    if (existingResponses) {
+        combinedWriting.responses = [...JSON.parse(decodeURIComponent(existingResponses)), ...combinedWriting.responses];
     }
 
-    if (!combinedWriting) {
-        combinedWriting = {
-            prompt: promptElement.textContent,
-            responses: []
-        };
-    }
+    const encodedPrompt = encodeURIComponent(combinedWriting.prompt);
+    const encodedResponses = encodeURIComponent(JSON.stringify(combinedWriting.responses));
+    const shareUrl = `${window.location.origin}${window.location.pathname}?prompt=${encodedPrompt}&responses=${encodedResponses}`;
 
-    combinedWriting.responses.push(textArea.value);
-
-    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
-    localStorage.setItem(id, JSON.stringify(combinedWriting));
-
-    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
 
@@ -273,16 +208,15 @@ function displayResponses(responses) {
 
 function loadSharedWriting() {
     const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('id');
-    if (id) {
-        const savedWriting = localStorage.getItem(id);
-        if (savedWriting) {
-            const data = JSON.parse(savedWriting);
-            promptElement.textContent = data.prompt;
-            displayResponses(data.responses);
-            textArea.value = '';
-            newPromptBtn.disabled = true;
-        }
+    const sharedPrompt = urlParams.get('prompt');
+    const sharedResponses = urlParams.get('responses');
+
+    if (sharedPrompt && sharedResponses) {
+        promptElement.textContent = decodeURIComponent(sharedPrompt);
+        const responses = JSON.parse(decodeURIComponent(sharedResponses));
+        displayResponses(responses);
+        textArea.value = '';
+        newPromptBtn.disabled = true;
     }
 }
 
