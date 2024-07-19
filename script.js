@@ -32,7 +32,7 @@ const prompts = [
     "If you could have any superpower...",
     "The strangest dream you've ever had",
     "Write a letter to your future self",
-    "Your favorite place in the world",
+    "Your favourite place in the world",
     "A character who can't tell lies",
     "The last person you'd expect as a hero",
     "A world where sleep is obsolete",
@@ -42,7 +42,7 @@ const prompts = [
     "A journey that changes everything",
     "The object that grants wishes",
     "A conversation with your younger self",
-    "The day colors disappeared",
+    "The day colours disappeared",
     "A world where animals can talk",
     "The last book in the world",
     "A door that leads anywhere",
@@ -218,14 +218,20 @@ function saveAndShare() {
     }
 
     const urlParams = new URLSearchParams(window.location.search);
-    const existingResponses = urlParams.get('responses');
-    if (existingResponses) {
-        combinedWriting.responses = [...JSON.parse(decodeURIComponent(existingResponses)), ...combinedWriting.responses];
+    const existingId = urlParams.get('id');
+    if (existingId) {
+        const existingWriting = localStorage.getItem(existingId);
+        if (existingWriting) {
+            const existingData = JSON.parse(existingWriting);
+            combinedWriting.responses = [...existingData.responses, ...combinedWriting.responses];
+        }
     }
 
-    const encodedPrompt = encodeURIComponent(combinedWriting.prompt);
-    const encodedResponses = encodeURIComponent(JSON.stringify(combinedWriting.responses));
-    const shareUrl = `${window.location.origin}${window.location.pathname}?prompt=${encodedPrompt}&responses=${encodedResponses}`;
+    const id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    localStorage.setItem(id, JSON.stringify(combinedWriting));
+
+    const encodedId = encodeURIComponent(id);
+    const shareUrl = `${window.location.origin}${window.location.pathname}?id=${encodedId}`;
 
     shareBtn.style.display = 'inline-block';
     shareBtn.dataset.shareUrl = shareUrl;
@@ -268,15 +274,21 @@ function displayResponses(responses) {
 
 function loadSharedWriting() {
     const urlParams = new URLSearchParams(window.location.search);
-    const sharedPrompt = urlParams.get('prompt');
-    const sharedResponses = urlParams.get('responses');
+    const id = urlParams.get('id');
 
-    if (sharedPrompt && sharedResponses) {
-        promptElement.textContent = decodeURIComponent(sharedPrompt);
-        const responses = JSON.parse(decodeURIComponent(sharedResponses));
-        displayResponses(responses);
-        textArea.value = '';
-        newPromptBtn.disabled = true;
+    if (id) {
+        const savedWriting = localStorage.getItem(id);
+        if (savedWriting) {
+            const data = JSON.parse(savedWriting);
+            promptElement.textContent = data.prompt;
+            displayResponses(data.responses);
+            textArea.value = '';
+            newPromptBtn.disabled = true;
+        } else {
+            console.log('No data found for ID:', id);
+        }
+    } else {
+        console.log('No ID in URL parameters');
     }
 }
 
